@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchAttributeException
@@ -6,13 +6,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-
-import time
+from datetime import datetime
 
 from dataset.output_class import Output_class
-
-
-timeout = 15
 
 
 def cinema_city_search(c_cinema, driver, title, date):
@@ -42,8 +38,7 @@ def cinema_city_search(c_cinema, driver, title, date):
     search_bar.send_keys(str(title) + Keys.RETURN)
     content = driver.find_element_by_xpath("/html/body/section[4]/section/div[1]/section/div[2]/div/div/div/div[2]/div/div[2]").text
     results.append(content)
-    #print(content)
-    return results
+    return prep_output(results)
 
 
 def multikino_search(c_cinema, driver, title, date):
@@ -53,56 +48,70 @@ def multikino_search(c_cinema, driver, title, date):
         d_url = str(url_1 +
         "%04d-%02d-%02d"%(date_object.year,date_object.month,date_object.day))
         date_today = datetime.today()
-        clicks = date_object - date_today
-        clicks = clicks.days
+        clicks = date_object.day - date_today.day
         return d_url, date_object, clicks
 
-    def prep_output(unprepared):
-        splitted = unprepared[0].split("\n")
+    def prep_output(unprepared, date_obj):
+        if unprepared == []:
+            return unprepared
+
+        splitter = ".%02d"%(date_obj.month)
+        unprepared = [x.split(splitter)[1] for x in unprepared]
+
+        splitted = unprepared[0].split("\n")[1:]
         itr = len(splitted)
         out = []
         for i in range(0,itr,2):
-            out.append(Output_class(splitted[i], splitted[i+1], splitted[i+2]))
+            t, l = splitted[i+1].split(',')
+            out.append(Output_class(t, splitted[i],l))
         return out
 
     url, date_obj, clicks = dated_url()
     driver.get(url)
 
+    time.sleep(5)
     try:
         driver.find_element_by_xpath("/html/body/div[2]/div/div/button").click()
     except:
         pass
 
     day_forward = driver.find_elements_by_class_name("timePicker_forw")
-    time.sleep(1)
     for _ in range(clicks): 
-        day_forward[0].click()
         time.sleep(1)
+        day_forward[0].click()
 
     results = []
     content = driver.find_elements_by_class_name("filmlist__item")
     for x in content:
         if title in x.text:
-            x.find_element_by_class_name("filmlist__times--expand").click()
+            try:
+                x.find_element_by_class_name("filmlist__times--expand").click()
+            except:
+                pass
 
     content = driver.find_elements_by_class_name("filmlist__item")
     for x in content:
         if title in x.text:
             results.append(x.text)
 
-    splitter = "%02d.%02d"%(date_obj.day, date_obj.month)
-    try:
-        if results!=[]:
-            results = [x.split(splitter)[1] for x in results]
-    except:
-        pass
-    return results
+    return prep_output(results, date_obj)
 
 
 def kino_odra_search(c_cinema, driver, title, date):
     def dated():
         date_object = datetime.strptime(date, '%d/%m/%y')
         return date_object
+
+    def prep_output(unprepared):
+        if unprepared == []:
+            return unprepared
+        unprepared = unprepared[0].split('\n')[3:]
+        results = []
+        for i in range(0, len(unprepared), 3):
+            hour = unprepared[i+1]
+            t, l = unprepared[i+2].split(" ")
+            results.append(Output_class(t, hour, l))
+        return results
 
     date_obj = dated()
     date_s = "%02d-%02d-%04d"%(date_obj.day,date_obj.month,date_obj.year)
@@ -121,7 +130,7 @@ def kino_odra_search(c_cinema, driver, title, date):
         content = [c for c in content.find_elements_by_class_name("movie-info-container") if title.upper() in c.text]
         if content!=[]: results.append(content[0].text)
 
-    return results
+    return prep_output(results)
 
 
 def go_kino_search(c_cinema, driver, title, date):

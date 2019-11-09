@@ -1,4 +1,3 @@
-import urllib.request
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchAttributeException
 from selenium.webdriver.common.keys import Keys
@@ -6,9 +5,6 @@ import time
 import pickle
 
 from dataset.cinema_class import Cinema
-
-title = "Rodzina Addamsów"
-date = "4/11/19"
 
 url1 = "https://www.cinema-city.pl/kina/wroclavia/1097#/buy-tickets-by-cinema?in-cinema=1097&at=2019-11-02&view-mode=list"
 url3 = "https://multikino.pl/repertuar/wroclaw-pasaz-grunwaldzki/teraz-gramy/alfabetyczny?data=04-11-2019"
@@ -22,20 +18,9 @@ driver = webdriver.Chrome(executable_path="drivers/chromedriver", options=chrome
 
 
 cin1 = Cinema("Wrocław", "Wroclavia", url1, "cinema city")
-#cin1.search(driver,title, date)
-#print("++++++++++++++++++++++++++++++++++++")
-
 cin2 = Cinema("Wrocław", "Korona", url2, "cinema city")
-#cin2.search(driver,title, date)
-#print("++++++++++++++++++++++++++++++++++++")
-
 cin3 = Cinema("Wrocław", "Pasaż Grunwaldzki", url3, "multikino")
-#cin3.search(driver,title, date)
-#print("++++++++++++++++++++++++++++++++++++")
-
 cin4 = Cinema("Oława", "Kino Odra", url4, "kino odra")
-#cin4.search(driver,title,date)
-#print("++++++++++++++++++++++++++++++++++++")
 
 pack = [cin1,cin2,cin3,cin4]
 try:
