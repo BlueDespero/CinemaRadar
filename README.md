@@ -14,13 +14,19 @@
         
         sudo docker build -t cinema_docker .
         
-    And then start enjoying CinemaRadar by typing:
+    And then starting it by typing:
         
         sudo sh start.sh
+        
+    That will put you inside the container where you can start enjoying CinemaRadar with:
+        
+        python3 docker_main.py
 
 3. Workings
 
     The program is using selenium python library with headless Chrome driver to scrap interesting information about the movies straight from the web pages of the cinemas. Cinemas it has access to are stored in dataset/cinemas.p pickle file in a form of instances of Cinema class.
+
+    Because cinemas of the same brand have the same design of their websites it is enough to write a procedure for scraping one of them to be able to scrap info from any cinema of that brand. In the current state of CinemaRadar the program can handle scraping CinemaCity, Multikino and Kino Odra (but this one is just a local cinema). That means any cinema of those brands can be added to the search pool in a matter of a few lines of code.
 
 4. Limitations
 
