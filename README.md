@@ -14,13 +14,9 @@
         
         sudo docker build -t cinema_docker .
         
-    And then starting it by typing:
+    And then start enjoying CinemaRadar by typing:
         
         sudo sh start.sh
-        
-    That will put you inside the container where you can start enjoying CinemaRadar with:
-        
-        python3 docker_main.py
 
 3. Workings
 
