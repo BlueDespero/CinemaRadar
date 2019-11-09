@@ -7,13 +7,19 @@
 2. Running
 
     CinemaRadar can be used by running the main.py command with a line:
+        
         python3 main.py
 
     An alternative to that is using a docker container. With Dockerfile provided all that is required from the user is to build a docker image with a line:
+        
         sudo docker build -t cinema_docker .
+        
     And then starting it by typing:
+        
         sudo sh start.sh
+        
     That will put you inside the container where you can start enjoying CinemaRadar with:
+        
         python3 docker_main.py
 
 3. Workings
